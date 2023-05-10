@@ -11,17 +11,6 @@ class Service(models.Model):
         return self.title
 
 
-class Blog(models.Model):
-    title = models.CharField(max_length=254)
-    post_date = models.DateField(auto_now_add=True)
-    content = models.CharField(max_length=500)
-    tags = models.CharField(max_length=40)
-    fb = models.CharField(max_length=254)
-    twitter = models.CharField(max_length=254)    
-    comment = models.CharField(max_length=500)
-
-    def __str__(self):
-        return self.title
     
 class Category(models.Model):
     title = models.CharField(max_length=254)

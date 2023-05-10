@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'knox',
     'api',
     'auth_api',
+    'blog',
 ]
 
 REST_FRAMEWORK = {
