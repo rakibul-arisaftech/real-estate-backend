@@ -9,7 +9,13 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
 from .serializers import UserSerializer, RegisterSerializer
+import os
 
+# HEALTH CHECK
+class HealthCheckAPI(generics.GenericAPIView):
+    def get(self, request):
+        print(os.environ.get('DB_NAME'))
+        return Response({'status': 'everything is working fine'})
 
 # Register API
 class RegisterAPI(generics.GenericAPIView):
