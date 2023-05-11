@@ -25,5 +25,6 @@ urlpatterns = [
     path('doc', schema_view),
     path('', include('api.urls')),
     path('api/v1/', include('auth_api.urls')),
-    path('api/v1/', include('blog.urls'))
+    path('api/v1/', include('blog.urls')),
+    path('api/v1/', include('service.urls')),
 ]

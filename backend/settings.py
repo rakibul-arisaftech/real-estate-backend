@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'api',
     'auth_api',
     'blog',
+    'service',
 ]
 
 REST_FRAMEWORK = {

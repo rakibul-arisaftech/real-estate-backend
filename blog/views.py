@@ -2,23 +2,29 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import PostSerializer
 from .models import Post
+from rest_framework import status
 
 # Create your views here.
 @api_view(['POST'])
 def create_post(request):
     if request.method == 'POST':
-        post = request.data
-        serializer = PostSerializer(data=post)
-        if serializer.is_valid():
-            serializer.save(user=request.user.username)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({"error": "An error has occurred"}, status=status.HTTP_502_BAD_GATEWAY)
+        if request.user.is_active:
+            # user = request.user
+            # print(f"create_post user: {user}")
+            # post = request.data
+            # print(f"create_post post: {post}")
+            serializer = PostSerializer(data=request.data)
+            if serializer.is_valid():
+                # serializer.save(user=request.user.username)
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
 def get_posts(request, format=None):
     if request.method == 'GET':
         posts = Post.objects.all()
-        serializer = PostSerializer(data=posts, many=True)
+        serializer = PostSerializer(posts, many=True)
         return Response({"posts": serializer.data})
     
 @api_view(['GET'])
