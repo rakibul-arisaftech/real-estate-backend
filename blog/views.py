@@ -7,15 +7,12 @@ from .models import Post
 @api_view(['POST'])
 def create_post(request):
     if request.method == 'POST':
-        print('enter***********')
         post = request.data
-        print(f"this is the post {post}")
         serializer = PostSerializer(data=post)
-        print(serializer)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user.username)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({"error": "kono jhamela hoica"})
+        return Response({"error": "An error has occurred"}, status=status.HTTP_502_BAD_GATEWAY)
 
 @api_view(['GET'])
 def get_posts(request, format=None):
