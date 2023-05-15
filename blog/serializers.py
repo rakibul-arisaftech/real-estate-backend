@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username')
 
 class CommentSerializer(serializers.ModelSerializer):
-    # author = UserSerializer(read_only=True)
+    author = UserSerializer(read_only=True)
 
     class Meta:
         model = Comment

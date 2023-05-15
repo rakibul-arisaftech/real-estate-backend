@@ -12,7 +12,8 @@ def post_list(request):
     if request.method == 'POST':
         data = {'author': request.user.id, **request.data}
         serializer = PostSerializer(data=data)
-        if serializer.is_valid():
+        print(request.user)
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -42,7 +43,7 @@ def post_detail(request, id):
     if request.method == 'PUT':
         data = {'author': request.user.id, **request.data}
         serializer = PostSerializer(post, data=data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -78,9 +79,9 @@ def comment_list(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 # @permission_classes([IsAuthenticated])
-def comment_detail(request, pk):
+def comment_detail(request, id):
     try:
-        comment = Comment.objects.get(pk=pk)
+        comment = Comment.objects.get(pk=id)
     except Comment.DoesNotExist:
         return Response(
             {'message': 'this post does not exist'}, 

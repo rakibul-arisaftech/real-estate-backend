@@ -23,9 +23,10 @@ schema_view = get_swagger_view(title='Real Estate API')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('doc', schema_view),
-    path('api/v1/', include('auth_api.urls')),
+    # path('api/v1/', include('auth_api.urls')),
     path('api/v1/', include('blog.urls')),
     path('api/v1/', include('service.urls')),
     path('api/v1/', include('category.urls')),
     path('api/v1/', include('property.urls')),
+    path('api/v1/', include('auth_system.urls')),
 ]

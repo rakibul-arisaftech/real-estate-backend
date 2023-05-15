@@ -52,11 +52,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'knox',
-    'auth_api',
+    # 'auth_api',
     'blog',
     'service',
     'category',
     'property',
+    'rest_framework.authtoken',
+    'auth_system',
 ]
 
 REST_FRAMEWORK = {
