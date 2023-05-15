@@ -9,18 +9,17 @@ class Post(models.Model):
     tags = models.CharField(max_length=40)
     fb = models.CharField(max_length=254)
     twitter = models.CharField(max_length=254)    
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
 
     def __str__(self):
         return self.title
     
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f"{self.author.username}'s comment on {self.post.title}"
-
-    
