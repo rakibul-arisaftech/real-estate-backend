@@ -14,11 +14,11 @@ def category_list(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
-    elif request.method == 'GET':
+    if request.method == 'GET':
         category = Category.objects.all()
         serializer = CategorySerializer(category, many=True)
         return Response({'category': serializer.data})
-    
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def category_detail(request, id):
@@ -33,13 +33,14 @@ def category_detail(request, id):
         serializer = CategorySerializer(category)
         return Response({"category": serializer.data})
     
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         serializer = CategorySerializer(category, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         category.delete()
         return Response({'message': 'Successfully Deleted'}, 
                         status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

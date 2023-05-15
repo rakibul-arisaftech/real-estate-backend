@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
     'knox',
-    'api',
     'auth_api',
     'blog',
     'service',

@@ -14,11 +14,11 @@ def service_list(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    elif request.method == 'GET':
+    if request.method == 'GET':
         services = Service.objects.all()
         serializer = ServiceSerializer(services, many=True)
         return Response({"services": serializer.data})
-
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def service_detail(request, id):
@@ -32,14 +32,14 @@ def service_detail(request, id):
         serializer = ServiceSerializer(service)
         return Response({"service": serializer.data})
     
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         serializer = ServiceSerializer(service, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         service.delete()
         return Response({'message': 'Successfully Deleted'}, 
                         status=status.HTTP_204_NO_CONTENT)
-
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

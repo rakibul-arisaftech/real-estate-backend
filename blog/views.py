@@ -16,12 +16,12 @@ def post_list(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # return Response(status=status.HTTP_401_UNAUTHORIZED)
-    elif request.method == 'GET':
+    if request.method == 'GET':
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
         return Response({"posts": serializer.data})
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    
 @api_view(['GET', 'PUT', 'DELETE'])
 def post_detail(request, id):
     try:
@@ -35,14 +35,14 @@ def post_detail(request, id):
         serializer = PostSerializer(post)
         return Response({"post": serializer.data})
     
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         serializer = PostSerializer(post, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
+
+    if request.method == 'DELETE':
         post.delete()
         return Response({'message': 'Successfully Deleted'}, 
                         status=status.HTTP_204_NO_CONTENT)
-        
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

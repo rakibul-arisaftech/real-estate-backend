@@ -14,11 +14,11 @@ def property_list(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
-    elif request.method == 'GET':
+    if request.method == 'GET':
         property_ = Property.objects.all()
         serializer = PropertySerializer(property_, many=True)
         return Response({"property": serializer.data})
-
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def property_detail(request, id):
@@ -33,13 +33,14 @@ def property_detail(request, id):
         serializer = PropertySerializer(property_)
         return Response({"property": serializer.data})
 
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         serializer = PropertySerializer(property_, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
 
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         property_.delete()
         return Response({'message': 'Successfully Deleted'}, 
                         status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
