@@ -15,7 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path, include
+from django.conf.urls.static import static
 from rest_framework_swagger.views import get_swagger_view
 
 schema_view = get_swagger_view(title='Real Estate API')
@@ -24,9 +26,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('doc', schema_view),
     # path('api/v1/', include('auth_api.urls')),
-    path('api/v1/', include('blog.urls')),
+    # path('api/v1/', include('auth_system.urls')),
+    path("api/v1/", include("users.urls", namespace="users")),
+    path("api/v1/post/", include("blog.urls", namespace="blog")),
+    # path("api-auth/", include("rest_framework.urls")),
     path('api/v1/', include('service.urls')),
     path('api/v1/', include('category.urls')),
     path('api/v1/', include('property.urls')),
-    path('api/v1/', include('auth_system.urls')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

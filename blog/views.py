@@ -1,109 +1,79 @@
-from rest_framework.decorators import api_view, permission_classes
-from .serializers import PostSerializer, CommentSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Post, Comment
-from rest_framework import status
+from django.shortcuts import get_object_or_404
+from rest_framework import permissions, status, viewsets
 
-# Create your views here.
-@api_view(['POST', 'GET'])
-# @permission_classes([IsAuthenticated])
-def post_list(request):
-    if request.method == 'POST':
-        data = {'author': request.user.id, **request.data}
-        serializer = PostSerializer(data=data)
-        print(request.user)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from .models import Category, Comment, Post
+from .serializers import (
+    CategoryReadSerializer,
+    CommentReadSerializer,
+    CommentWriteSerializer,
+    PostReadSerializer,
+    PostWriteSerializer,
+)
 
-    
-    if request.method == 'GET':
-        posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
-        return Response({"posts": serializer.data})
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+from .permissions import IsAuthorOrReadOnly
 
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
-# @permission_classes([IsAuthenticated])
-def post_detail(request, id):
-    try:
-        post = Post.objects.get(pk=id)
-    except Post.DoesNotExist:
-        return Response(
-            {'message': 'this post does not exist'}, 
-            status=status.HTTP_404_NOT_FOUND)
-        
-    if request.method == 'GET':
-        serializer = PostSerializer(post)
-        return Response({"post": serializer.data})
-    
-    if request.method == 'PUT':
-        data = {'author': request.user.id, **request.data}
-        serializer = PostSerializer(post, data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    CRUD post categories
+    """
 
-    if request.method == 'DELETE':
-        post.delete()
-        return Response({'message': 'Successfully Deleted'}, 
-                        status=status.HTTP_204_NO_CONTENT)
-        
-    if request.method == 'POST':
-        serializer = CommentSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    queryset = Category.objects.all()
+    serializer_class = CategoryReadSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
-@api_view(['GET', 'POST'])
-# @permission_classes([IsAuthenticated])
-def comment_list(request):
-    if request.method == 'GET':
-        comments = Comment.objects.all()
-        serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data)
-    
-    if request.method == 'POST':
-        serializer = CommentSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(author=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+class PostViewSet(viewsets.ModelViewSet):
+    """
+    CRUD posts
+    """
 
-@api_view(['GET', 'PUT', 'DELETE'])
-# @permission_classes([IsAuthenticated])
-def comment_detail(request, id):
-    try:
-        comment = Comment.objects.get(pk=id)
-    except Comment.DoesNotExist:
-        return Response(
-            {'message': 'this post does not exist'}, 
-            status=status.HTTP_404_NOT_FOUND)
+    queryset = Post.objects.all()
 
-    if request.method == 'GET':
-        serializer = CommentSerializer(comment)
-        return Response(serializer.data)
+    def get_serializer_class(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return PostWriteSerializer
 
-    if request.method == 'PUT':
-        if comment.author != request.user:
-            return Response({"message": "You do not have permission to update this comment."}, status=403)
-        serializer = CommentSerializer(comment, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return PostReadSerializer
 
-    if request.method == 'DELETE':
-        if comment.author != request.user:
-            return Response({"message": "You do not have permission to delete this comment."}, status=403)
-        comment.delete()
-        return Response({'message': 'Successfully Deleted'}, 
-                        status=status.HTTP_204_NO_CONTENT)
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    def get_permissions(self):
+        if self.action in ("create",):
+            self.permission_classes = (permissions.IsAuthenticated,)
+        elif self.action in ("update", "partial_update", "destroy"):
+            self.permission_classes = (IsAuthorOrReadOnly,)
+        else:
+            self.permission_classes = (permissions.AllowAny,)
+
+        return super().get_permissions()
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """
+    CRUD comments for a particular post
+    """
+
+    queryset = Comment.objects.all()
+
+    def get_queryset(self):
+        res = super().get_queryset()
+        post_id = self.kwargs.get("post_id")
+        return res.filter(post__id=post_id)
+
+    def get_serializer_class(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return CommentWriteSerializer
+
+        return CommentReadSerializer
+
+    def get_permissions(self):
+        if self.action in ("create",):
+            self.permission_classes = (permissions.IsAuthenticated,)
+        elif self.action in ("update", "partial_update", "destroy"):
+            self.permission_classes = (IsAuthorOrReadOnly,)
+        else:
+            self.permission_classes = (permissions.AllowAny,)
+
+        return super().get_permissions()
+

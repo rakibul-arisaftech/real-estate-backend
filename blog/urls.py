@@ -1,9 +1,16 @@
-from . import views
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+
+from .views import CategoryViewSet, CommentViewSet, PostViewSet
+
+app_name = "blog"
+
+router = DefaultRouter()
+router.register(r"categories", CategoryViewSet)
+router.register(r"^(?P<post_id>\d+)/comment", CommentViewSet)
+router.register(r"", PostViewSet)
+
 
 urlpatterns = [
-    path('blog/post', views.post_list),
-    path('blog/post/<int:id>', views.post_detail),
-    path('blog/comment', views.comment_list),
-    path('blog/comment/<int:id>', views.comment_detail),
+    path("", include(router.urls)),
 ]

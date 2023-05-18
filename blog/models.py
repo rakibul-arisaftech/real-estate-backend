@@ -1,25 +1,53 @@
 from django.db import models
-from django.contrib.auth.models import User
-# Create your models here.
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+
+
+class Category(models.Model):
+    name = models.CharField(_("Category name"), max_length=100)
+
+    class Meta:
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
+
+    def __str__(self):
+        return self.name
+
 
 class Post(models.Model):
-    title = models.CharField(max_length=60)
-    post_date = models.DateField(auto_now_add=True)
-    content = models.TextField()
-    tags = models.CharField(max_length=40)
-    fb = models.CharField(max_length=254)
-    twitter = models.CharField(max_length=254)    
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-
-
-    def __str__(self):
-        return self.title
-    
-class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', null=True)
-    content = models.TextField()
+    title = models.CharField(_("Post title"), max_length=250)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="posts",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    categories = models.ManyToManyField(Category, related_name="posts_list", blank=True)
+    body = models.TextField(_("Post body"))
     created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.author.username}'s comment on {self.post.title}"
+        return f"{self.title} by {self.author.username}"
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="post_comments",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    body = models.TextField(_("Comment body"))
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.body[:20]} by {self.author.username}"
