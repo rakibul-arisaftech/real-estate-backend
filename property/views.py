@@ -1,46 +1,29 @@
+from rest_framework import permissions, status, viewsets
 from .models import Property
-from rest_framework import status
-from .serializers import PropertySerializer
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from .serializers import PropertyReadSerializer, PropertyWriteSerializer
+from .permissions import IsAuthorOrReadOnly
 
-# Create your views here.
-@api_view(['GET', 'POST'])
-def property_list(request):
-    if request.method == 'POST':
-        property_ = request.data
-        serializer = PropertySerializer(data=property_)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-    if request.method == 'GET':
-        property_ = Property.objects.all()
-        serializer = PropertySerializer(property_, many=True)
-        return Response({"property": serializer.data})
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def property_detail(request, id):
-    try:
-        property_ = Property.objects.get(pk=id)
-    except Property.DoesNotExist:
-        return Response(
-            {'message': 'this property does not exist'}, 
-            status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
-        serializer = PropertySerializer(property_)
-        return Response({"property": serializer.data})
+class PropertyViewSet(viewsets.ModelViewSet):
+    """
+    CRUD property
+    """
 
-    if request.method == 'PUT':
-        serializer = PropertySerializer(property_, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+    queryset = Property.objects.all()
 
-    if request.method == 'DELETE':
-        property_.delete()
-        return Response({'message': 'Successfully Deleted'}, 
-                        status=status.HTTP_204_NO_CONTENT)
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    def get_serializer_class(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return PropertyWriteSerializer
+
+        return PropertyReadSerializer
+
+    def get_permissions(self):
+        if self.action in ("create",):
+            self.permission_classes = (permissions.IsAuthenticated,)
+        elif self.action in ("update", "partial_update", "destroy"):
+            self.permission_classes = (IsAuthorOrReadOnly,)
+        else:
+            self.permission_classes = (permissions.AllowAny,)
+
+        return super().get_permissions()

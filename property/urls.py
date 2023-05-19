@@ -1,7 +1,15 @@
-from . import views
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+
+from .views import PropertyViewSet
+
+app_name = "property"
+
+router = DefaultRouter()
+router.register(r"^(?P<post_id>\d+)/", PropertyViewSet)
+router.register(r"property", PropertyViewSet)
+
 
 urlpatterns = [
-    path('property', views.property_list),
-    path('property/<int:id>', views.property_detail),
+    path("", include(router.urls)),
 ]

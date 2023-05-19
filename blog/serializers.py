@@ -12,7 +12,6 @@ class CategoryReadSerializer(serializers.ModelSerializer):
 class PostReadSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="author.username", read_only=True)
     categories = serializers.SerializerMethodField(read_only=True)
-    # likes = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Post
@@ -23,12 +22,6 @@ class PostReadSerializer(serializers.ModelSerializer):
             cat.name for cat in obj.categories.get_queryset().only("name")
         )
         return categories
-
-    # def get_likes(self, obj):
-    #     likes = list(
-    #         like.username for like in obj.likes.get_queryset().only("username")
-    #     )
-    #     return likes
 
 
 class PostWriteSerializer(serializers.ModelSerializer):

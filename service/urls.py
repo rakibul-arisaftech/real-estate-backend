@@ -1,7 +1,15 @@
-from . import views
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+
+from .views import ServiceViewSet
+
+app_name = "service"
+
+router = DefaultRouter()
+router.register(r"^(?P<post_id>\d+)/", ServiceViewSet)
+router.register(r"service", ServiceViewSet)
+
 
 urlpatterns = [
-    path('service', views.service_list),
-    path('service/<int:id>', views.service_detail),
+    path("", include(router.urls)),
 ]

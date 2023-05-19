@@ -1,7 +1,14 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 class Property(models.Model):
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="property",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     title = models.CharField(max_length=60)
     size = models.CharField(max_length=50)
     location = models.CharField(max_length=100)
