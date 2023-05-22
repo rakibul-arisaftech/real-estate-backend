@@ -1,9 +1,9 @@
-from rest_framework import permissions, status, viewsets
-from .models import Property
 from .serializers import PropertyReadSerializer, PropertyWriteSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions, viewsets
+from rest_framework.filters import SearchFilter
 from .permissions import IsAuthorOrReadOnly
-
-
+from .models import Property
 
 class PropertyViewSet(viewsets.ModelViewSet):
     """
@@ -11,6 +11,8 @@ class PropertyViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Property.objects.all()
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    filterset_fields = ('location', 'price')
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update", "destroy"):
@@ -27,3 +29,11 @@ class PropertyViewSet(viewsets.ModelViewSet):
             self.permission_classes = (permissions.AllowAny,)
 
         return super().get_permissions()
+
+
+
+# class PropertySearch(generics.ListAPIView):
+#     queryset = Property.objects.all()
+#     serializer_class = PropertyReadSerializer
+#     filter_backends = (DjangoFilterBackend, SearchFilter)
+#     filterset_fields = ('location', 'price')
