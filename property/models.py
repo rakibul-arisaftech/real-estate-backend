@@ -17,6 +17,7 @@ class Property(models.Model):
     price = models.CharField(max_length=50)
     description = models.TextField()
     image = models.ImageField(upload_to='images/property/')
+    property_type = models.CharField(max_length=40, null=True)
 
     def __str__(self):
         return self.title
