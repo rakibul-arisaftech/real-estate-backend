@@ -18,7 +18,7 @@ class PropertyViewSet(viewsets.ModelViewSet):
 
     queryset = Property.objects.all()
     filter_backends = (DjangoFilterBackend, SearchFilter)
-    filterset_fields = ('location', 'price')
+    filterset_fields = ('location', 'property_type', 'price')
     pagination_class = PropertyViewPagination
 
     def get_serializer_class(self):
