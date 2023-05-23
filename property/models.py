@@ -10,11 +10,11 @@ class Property(models.Model):
         on_delete=models.SET_NULL,
     )
     title = models.CharField(max_length=60)
-    size = models.CharField(max_length=50)
+    size = models.PositiveIntegerField(default=0)
     location = models.CharField(max_length=100)
     rooms = models.PositiveIntegerField(default=0)
     baths = models.PositiveIntegerField(default=0)
-    price = models.CharField(max_length=50)
+    price = models.PositiveIntegerField(default=0)
     description = models.TextField()
     image = models.ImageField(upload_to='images/property/')
     property_type = models.CharField(max_length=40, null=True)
