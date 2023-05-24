@@ -8,6 +8,11 @@ class CategoryReadSerializer(serializers.ModelSerializer):
         model = Category
         fields = "__all__"
 
+class CategoryWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
+
 
 class PostReadSerializer(serializers.ModelSerializer):
     author = serializers.CharField(source="author.username", read_only=True)

@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import CategoryViewSet, CommentViewSet, PostViewSet
+from .views import CategoryViewSet, CommentViewSet, PostViewSet, latest_posts
 
 app_name = "blog"
 
@@ -13,4 +13,5 @@ router.register(r"", PostViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("latest", latest_posts),
 ]
