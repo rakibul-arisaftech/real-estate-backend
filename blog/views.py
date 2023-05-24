@@ -20,7 +20,7 @@ from .permissions import IsAuthorOrReadOnly
 @api_view(['GET'])
 def latest_posts(request):
     if request.method == 'GET':
-        posts = Post.objects.order_by('-created_at')[0:5]
+        posts = Post.objects.order_by('-created_at')[0:3]
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data)
 

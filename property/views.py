@@ -2,9 +2,20 @@ from .serializers import PropertyReadSerializer, PropertyWriteSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, viewsets
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.decorators import api_view
 from .permissions import IsAuthorOrReadOnly
 from .models import Property
+
+
+@api_view(['GET'])
+def latest_property(request):
+    if request.method == 'GET':
+        properties = Property.objects.order_by('-id')[0:5]
+        serializer = PropertyReadSerializer(properties, many=True)
+        return Response(serializer.data)
+
 
 
 class PropertyViewPagination(LimitOffsetPagination):

@@ -15,6 +15,7 @@ class Property(models.Model):
     rooms = models.PositiveIntegerField(default=0)
     baths = models.PositiveIntegerField(default=0)
     price = models.PositiveIntegerField(default=0)
+    tag = models.CharField(max_length=5, null=True)
     description = models.TextField()
     image = models.ImageField(upload_to='images/property/')
     property_type = models.CharField(max_length=40, null=True)

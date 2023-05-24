@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import PropertyViewSet
+from .views import PropertyViewSet, latest_property
 
 app_name = "property"
 
@@ -12,4 +12,5 @@ router.register(r"property", PropertyViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("property/latest", latest_property),
 ]
