@@ -4,17 +4,26 @@ from rest_framework import permissions, viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.decorators import api_view
+# from rest_framework.decorators import api_view
 from .permissions import IsAuthorOrReadOnly
 from .models import Property
+from rest_framework.views import APIView
 
 
-@api_view(['GET'])
-def latest_property(request):
-    if request.method == 'GET':
-        properties = Property.objects.order_by('-id')[0:5]
-        serializer = PropertyReadSerializer(properties, many=True)
+class LatestPropertyView(APIView):
+    def get(self, request, format=None):
+        queryset = Property.objects.order_by('-id')[:6]
+        serializer = PropertyReadSerializer(queryset, context={"request": 
+                        request}, many=True)
         return Response(serializer.data)
+
+
+# @api_view(['GET'])
+# def latest_property(request):
+#     if request.method == 'GET':
+#         properties = Property.objects.order_by('-id')[0:6]
+#         serializer = PropertyReadSerializer(properties, context={"request": request}, many=True)
+#         return Response(serializer.data)
 
 
 
@@ -38,6 +47,12 @@ class PropertyViewSet(viewsets.ModelViewSet):
 
         return PropertyReadSerializer
 
+    # def get_serializer_context(self):
+    #     context = super().get_serializer_context()
+    #     # Add any additional context data you want to pass to the serializer
+    #     context['request'] = self.request
+    #     return context
+    
     def get_permissions(self):
         if self.action in ("create",):
             self.permission_classes = (permissions.IsAuthenticated,)
