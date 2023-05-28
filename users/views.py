@@ -15,13 +15,13 @@ api_view(['GET'])
 def health_check(request):
     return JsonResponse({"message": "everything is working fine"})
 
-class UserRegisterationAPIView(GenericAPIView):
+class UserRegistrationAPIView(GenericAPIView):
     """
     An endpoint for the client to create a new User.
     """
 
     permission_classes = (AllowAny,)
-    serializer_class = serializers.UserRegisterationSerializer
+    serializer_class = serializers.UserRegistrationSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
