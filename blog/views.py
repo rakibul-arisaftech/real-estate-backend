@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import api_view
+from rest_framework import permissions, status, viewsets
+from rest_framework.pagination import LimitOffsetPagination
 
 from .models import Category, Comment, Post
 from .serializers import (
@@ -20,10 +21,14 @@ from .permissions import IsAuthorOrReadOnly
 @api_view(['GET'])
 def latest_posts(request):
     if request.method == 'GET':
-        posts = Post.objects.order_by('-created_at')[0:3]
+        posts = Post.objects.order_by('-created_at')[:3]
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data)
 
+
+class BlogViewPagination(LimitOffsetPagination):
+    default_limit = 6
+    max_limit = 10
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -34,6 +39,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     # serializer_class = CategoryReadSerializer
     # permission_classes = (permissions.IsAuthenticated,)
+
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update", "destroy"):
             return CategoryWriteSerializer
@@ -57,6 +63,7 @@ class PostViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Post.objects.all()
+    pagination_class = BlogViewPagination
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update", "destroy"):
