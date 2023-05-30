@@ -24,6 +24,7 @@ class Post(models.Model):
     )
     categories = models.ManyToManyField(Category, related_name="posts_list", blank=True)
     body = models.TextField(_("Post body"))
+    image = models.ImageField(upload_to='images/blog/', null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
