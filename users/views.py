@@ -22,7 +22,7 @@ class UserRegistrationAPIView(GenericAPIView):
 
     permission_classes = (AllowAny,)
     serializer_class = serializers.UserRegistrationSerializer
-
+    
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -42,14 +42,17 @@ class UserLoginAPIView(GenericAPIView):
     serializer_class = serializers.UserLoginSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
-        serializer = serializers.CustomUserSerializer(user)
-        token = RefreshToken.for_user(user)
-        data = serializer.data
-        data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
-        return Response(data, status=status.HTTP_200_OK)
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.validated_data
+            serializer = serializers.CustomUserSerializer(user)
+            token = RefreshToken.for_user(user)
+            data = serializer.data
+            data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'message': 'invalid credintial'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserLogoutAPIView(GenericAPIView):
