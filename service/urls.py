@@ -6,8 +6,8 @@ from .views import ServiceViewSet
 app_name = "service"
 
 router = DefaultRouter()
-router.register(r"^(?P<post_id>\d+)/", ServiceViewSet)
-router.register(r"service", ServiceViewSet)
+router.register(r"^(?P<post_id>\d+)/", ServiceViewSet, 'service-crud')
+router.register(r"service", ServiceViewSet, 'create-service')
 
 
 urlpatterns = [
