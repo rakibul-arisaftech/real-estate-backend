@@ -24,13 +24,22 @@ class UserRegistrationAPIView(GenericAPIView):
     serializer_class = serializers.UserRegistrationSerializer
     
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        token = RefreshToken.for_user(user)
-        data = serializer.data
-        data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
-        return Response(data, status=status.HTTP_201_CREATED)
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.save()
+            token = RefreshToken.for_user(user)
+            data = serializer.data
+            data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
+            return Response(data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+        # else:
+            for field_name, field_errors in serializer.errors.items():
+                return Response({
+                    'status_code': 409,
+                    'message': field_errors[0]
+                    }, status=status.HTTP_409_CONFLICT)
+
 
 
 class UserLoginAPIView(GenericAPIView):
@@ -52,7 +61,11 @@ class UserLoginAPIView(GenericAPIView):
             data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
             return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'message': 'invalid credintial'}, status=status.HTTP_401_UNAUTHORIZED)
+            print(e)
+            return Response({
+                'status_code': 401,
+                'message': 'invalid credential'
+                }, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserLogoutAPIView(GenericAPIView):

@@ -1,6 +1,6 @@
 from .serializers import PropertyReadSerializer, PropertyWriteSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
@@ -15,7 +15,7 @@ class LatestPropertyView(APIView):
         queryset = Property.objects.order_by('-id')[:6]
         serializer = PropertyReadSerializer(queryset, context={"request": 
                         request}, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # @api_view(['GET'])
