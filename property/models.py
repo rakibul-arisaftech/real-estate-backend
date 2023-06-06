@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+
 
 # Create your models here.
 class Property(models.Model):
@@ -19,6 +21,32 @@ class Property(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='images/property/')
     property_type = models.CharField(max_length=40, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} by {self.author.username}"
+
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Property, related_name="comments", on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="property_comments",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    body = models.TextField(_("Comment body"))
+    rating = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.body[:20]} by {self.author.username}"

@@ -1,4 +1,9 @@
-from .serializers import PropertyReadSerializer, PropertyWriteSerializer
+from .serializers import (
+    PropertyReadSerializer,
+    PropertyWriteSerializer,
+    CommentReadSerializer,
+    CommentWriteSerializer
+    )
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.filters import SearchFilter
@@ -6,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 # from rest_framework.decorators import api_view
 from .permissions import IsAuthorOrReadOnly
-from .models import Property
+from .models import Property, Comment
 from rest_framework.views import APIView
 
 
@@ -70,3 +75,33 @@ class PropertyViewSet(viewsets.ModelViewSet):
 #     serializer_class = PropertyReadSerializer
 #     filter_backends = (DjangoFilterBackend, SearchFilter)
 #     filterset_fields = ('location', 'price')
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """
+    CRUD comments for a particular post
+    """
+
+    queryset = Comment.objects.all()
+
+    def get_queryset(self):
+        res = super().get_queryset()
+        post_id = self.kwargs.get("post_id")
+        return res.filter(post__id=post_id)
+
+    def get_serializer_class(self):
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return CommentWriteSerializer
+
+        return CommentReadSerializer
+
+    def get_permissions(self):
+        if self.action in ("create",):
+            self.permission_classes = (permissions.IsAuthenticated,)
+        elif self.action in ("update", "partial_update", "destroy"):
+            self.permission_classes = (IsAuthorOrReadOnly,)
+        else:
+            self.permission_classes = (permissions.AllowAny,)
+
+        return super().get_permissions()
+

@@ -34,7 +34,7 @@ urlpatterns = [
     # path("api-auth/", include("rest_framework.urls")),
     path('api/v1/', include('service.urls')),
     path('api/v1/', include('category.urls')),
-    path('api/v1/', include('property.urls')),
+    path('api/v1/property/', include('property.urls')),
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,4 +1,4 @@
-from .models import Property
+from .models import Property, Comment
 from rest_framework import serializers
 
 class PropertyReadSerializer(serializers.ModelSerializer):
@@ -21,4 +21,20 @@ class PropertyWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         # fields = ('id', 'title', 'size', 'location', 'rooms', 'baths', 'price', 'description', 'author')
+        fields = "__all__"
+
+
+class CommentReadSerializer(serializers.ModelSerializer):
+    author = serializers.CharField(source="author.username", read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
+
+
+class CommentWriteSerializer(serializers.ModelSerializer):
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Comment
         fields = "__all__"
