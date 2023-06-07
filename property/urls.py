@@ -13,5 +13,5 @@ router.register(r"^(?P<post_id>\d+)/comment", CommentViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("property/latest", LatestPropertyView.as_view()),
+    path("latest", LatestPropertyView.as_view()),
 ]
