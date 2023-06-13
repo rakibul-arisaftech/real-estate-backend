@@ -27,14 +27,11 @@ schema_view = get_swagger_view(title='Real Estate API')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('doc', schema_view),
-    # path('api/v1/', include('auth_api.urls')),
-    # path('api/v1/', include('auth_system.urls')),
-    path("api/v1/", include("users.urls", namespace="users")),
-    path("api/v1/post/", include("blog.urls", namespace="blog")),
-    # path("api-auth/", include("rest_framework.urls")),
-    path('api/v1/', include('service.urls')),
-    path('api/v1/', include('category.urls')),
-    path('api/v1/property/', include('property.urls')),
+    path("api/v2/", include("users.urls", namespace="users")),
+    path("api/v2/post/", include("blog.urls", namespace="blog")),
+    path('api/v2/', include('service.urls')),
+    path('api/v2/', include('category.urls')),
+    path('api/v2/', include('property.urls')),
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

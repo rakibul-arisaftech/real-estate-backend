@@ -2,7 +2,7 @@ from .serializers import (
     PropertyReadSerializer,
     PropertyWriteSerializer,
     CommentReadSerializer,
-    CommentWriteSerializer
+    CommentWriteSerializer,
     )
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
@@ -104,4 +104,3 @@ class CommentViewSet(viewsets.ModelViewSet):
             self.permission_classes = (permissions.AllowAny,)
 
         return super().get_permissions()
-

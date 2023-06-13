@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Profile
+from .models import CustomUser, Profile, Wishlist
 from django.contrib.auth import authenticate
 
 
@@ -40,4 +40,51 @@ class UserLoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect Credentials")
+    
 
+# class ProfileSerializer(CustomUserSerializer):
+#     """
+#     Serializer class to serialize the user Profile model
+#     """
+    
+#     class Meta:
+#         model = Profile
+#         fields = '__all__'
+
+# class WishlistSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer class to serialize the user Wishlist model
+#     """
+
+#     class Meta:
+#         model = Wishlist
+#         fields = '__all__'
+
+
+class ProfileReadSerializer(CustomUserSerializer):
+    wishlist = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+    def get_wishlist(self, obj):
+        wish_lists = Wishlist.objects.filter(user_id=obj.user_id)
+        return [i.property_id for i in wish_lists]
+
+
+class ProfileWriteSerializer(CustomUserSerializer):
+
+    class Meta:
+        model = Profile
+        fields = "__all__"
+
+class WishlistReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wishlist
+        fields = "__all__"
+
+class WishlistWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wishlist
+        fields = "__all__"
