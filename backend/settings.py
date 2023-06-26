@@ -37,7 +37,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-t71e!3%aa&=&ny6+slzsexj7zjcd7bou66sw8hsh1%pa3(@!-o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -105,28 +105,28 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': env('DB_NAME'),
-#         'USER': env('DB_USER'),
-#         'PASSWORD': env('DB_USER_PASSWORD'),
-#         'HOST': env('DB_HOST'),
-#         'PORT': env('DB_DB_PORT'),
-#     }
-# }
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "realestate",
-        'USER': "postgres",
-        'PASSWORD': "AST@#5212",
-        'HOST': "localhost",
-        'PORT': "5432",
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_USER_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_DB_PORT'),
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': "realestate",
+#         'USER': "postgres",
+#         'PASSWORD': "AST@#5212",
+#         'HOST': "localhost",
+#         'PORT': "5432",
+#     }
+# }
 
 
 
@@ -232,3 +232,13 @@ CORS_ALLOW_HEADERS = [
 'x-csrftoken',
 'x-requested-with',
 ]
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'remon.rakibul.star@gmail.com'
+EMAIL_HOST_PASSWORD = 'tkbhoabtaeyxogsd'
+# EMAIL_HOST = 'smtp.zoho.com'
+# EMAIL_PORT = 465
+# EMAIL_HOST_USER = 'test@webhawksit.net'
+# EMAIL_HOST_PASSWORD = 'AriSaf@$5212'
