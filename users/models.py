@@ -5,20 +5,33 @@ from .managers import CustomUserManager
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ValidationError
 
 from property.models import Property
 
+def no_special_char(value): 
+    if '@' in value or '!' in value or '#' in value or '$' in value or '%' in value or '^' in value or '&' in value or '*' in value or '+' in value or '-' in value or '.' in value:
+        raise ValidationError("This field is not accept special character or space..")
+
 class CustomUser(AbstractUser):
-    email = models.EmailField(_("email address"), unique=True)
+    username = models.CharField(
+        max_length=80,
+        unique=True,
+        validators=[no_special_char],
+    )
+    email = models.EmailField(unique=True)
+    # change_email = models.EmailField(blank=True,null=True)
+    is_verified = models.BooleanField(default=False)
+    otp = models.CharField(max_length=6,null=True,blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
     objects = CustomUserManager()
 
+            
     def __str__(self):
-        return self.email
+        return f'{self.username}'
 
 
 def get_image_filename(instance, filename):
@@ -28,7 +41,6 @@ def get_image_filename(instance, filename):
 
 
 class Wishlist(models.Model):
-    # name = models.PositiveIntegerField(_("property_id"))
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True)
     property = models.ForeignKey(Property, related_name="property", on_delete=models.CASCADE)
 
@@ -48,7 +60,6 @@ class Profile(models.Model):
     email = models.EmailField(null=True)
     address = models.CharField(max_length=200, null=True)
     wishlist = models.ManyToManyField(Wishlist, related_name="wishlist", blank=True)
-    # wishlist = ArrayField(models.IntegerField(), max_length=10, null=True)
 
     def __str__(self):
         return self.user.email
@@ -56,7 +67,3 @@ class Profile(models.Model):
     @property
     def filename(self):
         return os.path.basename(self.image.name)
-
-# class Wishlist(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, unique=False)
-#     property = models.ForeignKey(Property, related_name="property", on_delete=models.CASCADE)
