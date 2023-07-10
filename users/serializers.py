@@ -84,11 +84,18 @@ class ChangePasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(required=True)
 
 class ResetPasswordOTPSerializer(serializers.ModelSerializer):
+    """
+    Serializer for reset password otp endpoint.
+    """
     class Meta:
         model = CustomUser
         fields = ('otp',)
 
+class ResetPasswordSerializer(serializers.Serializer):
+    model = CustomUser
+
     """
-    Serializer for password change endpoint.
+    Serializer for reset password endpoint.
     """
-    # email = serializers.EmailField(required=True)
+    email = serializers.EmailField(required=True)
+    new_password = serializers.CharField(required=True)

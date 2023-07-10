@@ -13,6 +13,8 @@ from rest_framework import status, viewsets, permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
 
+from django.contrib.auth.hashers import make_password
+
 from django.core.mail import send_mail
 from django.conf import settings
 import random
@@ -146,24 +148,49 @@ class ResetPasswordOTP(GenericAPIView):
     
     def put(self, request):
         serializer = self.get_serializer(data=request.data)
-        # user = User.objects.filter(email=request.data['email'])
-        # serializer = self.get_serializer(user, data=request.data)
+        print(serializer.is_valid())
         if serializer.is_valid():
-            serializer.save()
-            data = serializer.data
+            # serializer.save()
+            # data = serializer.data
             subject = 'Your account password reset email'
             otp = random.randint(1000, 9999)
             message = f'Your otp is {otp}'
             email_from = settings.EMAIL_HOST
-            # print(data['email'])
-            send_mail(subject, message, email_from, [data['email']])
-            user_obj = User.objects.get(email=data['email'])
+            print(request.data['email'])
+            send_mail(subject, message, email_from, [request.data['email']])
+            user_obj = User.objects.get(email=request.data['email'])
             user_obj.otp = otp
             user_obj.save()
             return Response({
                         'status': 200,
                         'message': 'Reset password OTP sent, please check email'
                         }, status=status.HTTP_200_OK)
+
+class ResetPasswordView(generics.UpdateAPIView):
+    """
+    An endpoint for resetting password.
+    """
+    serializer_class = serializers.ResetPasswordSerializer
+    model = User
+    permission_classes = (AllowAny,)
+
+    def update(self, request, *args, **kwargs):
+        user = User.objects.filter(email=request.data['email'])[0]
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            user.set_password(serializer.data.get("new_password"))
+            user.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully'
+            }
+
+            return Response(response)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserLoginAPIView(GenericAPIView):
     """
