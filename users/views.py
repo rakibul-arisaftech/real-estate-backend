@@ -148,7 +148,6 @@ class ResetPasswordOTP(GenericAPIView):
     
     def put(self, request):
         serializer = self.get_serializer(data=request.data)
-        print(serializer.is_valid())
         if serializer.is_valid():
             # serializer.save()
             # data = serializer.data
@@ -156,7 +155,6 @@ class ResetPasswordOTP(GenericAPIView):
             otp = random.randint(1000, 9999)
             message = f'Your otp is {otp}'
             email_from = settings.EMAIL_HOST
-            print(request.data['email'])
             send_mail(subject, message, email_from, [request.data['email']])
             user_obj = User.objects.get(email=request.data['email'])
             user_obj.otp = otp
