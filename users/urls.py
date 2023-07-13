@@ -2,6 +2,7 @@ from users import views
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.routers import DefaultRouter
+from users.views import LogOutAPIView
 
 app_name = "users"
 
@@ -13,7 +14,8 @@ urlpatterns = [
     path("register", views.UserRegistrationAPIView.as_view(), name="create-user"),
     path("login", views.UserLoginAPIView.as_view(), name="login-user"),
     path("token/refresh", TokenRefreshView.as_view(), name="token-refresh"),
-    path("logout", views.UserLogoutAPIView.as_view(), name="logout-user"),
+    # path("logout", views.UserLogoutAPIView.as_view(), name="logout-user"),
+    path("logout", LogOutAPIView.as_view(), name="logout-user"),
     path("email-verify", views.VerifyEmailOTP.as_view(), name='email-verify'),
     path('change-password', views.ChangePasswordView.as_view(), name='change-password'),
     path('reset-password-otp', views.ResetPasswordOTP.as_view(), name='reset-password-otp'),
