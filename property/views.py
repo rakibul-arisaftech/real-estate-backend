@@ -48,7 +48,6 @@ class PropertyViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update", "destroy"):
-            
             return PropertyWriteSerializer
 
         return PropertyReadSerializer
