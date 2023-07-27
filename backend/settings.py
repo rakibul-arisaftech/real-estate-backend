@@ -128,6 +128,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': "realestate_v2",
+#         'USER': "postgres",
+#         'PASSWORD': "1234",
+#         'HOST': "localhost",
+#         'PORT': "5432",
+#     }
+# }
 
 
 # Password validation
