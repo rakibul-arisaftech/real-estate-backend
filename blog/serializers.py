@@ -27,6 +27,11 @@ class PostReadSerializer(serializers.ModelSerializer):
             cat.name for cat in obj.categories.get_queryset().only("name")
         )
         return categories
+    
+    def get_photo_url(self, obj):
+        request = self.context.get('request')
+        photo_url = obj.fingerprint.url
+        return request.build_absolute_uri(photo_url)
 
 
 class PostWriteSerializer(serializers.ModelSerializer):
