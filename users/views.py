@@ -210,7 +210,7 @@ class UserLoginAPIView(GenericAPIView):
                 "message": "login successfull",
                 "user_info": serializer.data,
                 "tokens": {"refresh": str(token), "access": str(token.access_token)}
-            }
+            } 
             # data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
             return Response(data, status=status.HTTP_200_OK)
         except Exception as e:

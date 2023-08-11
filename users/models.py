@@ -58,7 +58,11 @@ class Profile(models.Model):
     date_of_birth = models.DateField(null=True)
     phone = models.CharField(max_length=20, null=True)
     email = models.EmailField(null=True)
+    nid = models.IntegerField(null=True)
+    passport = models.CharField(max_length=9, null=True)
     address = models.CharField(max_length=200, null=True)
+    division = models.CharField(max_length=20, null=True)
+    district = models.CharField(max_length=20, null=True)
     wishlist = models.ManyToManyField(Wishlist, related_name="wishlist", blank=True)
 
     def __str__(self):
