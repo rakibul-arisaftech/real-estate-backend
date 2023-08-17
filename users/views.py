@@ -204,15 +204,18 @@ class UserLoginAPIView(GenericAPIView):
             serializer.is_valid(raise_exception=True)
             user = serializer.validated_data
             serializer = serializers.CustomUserSerializer(user)
-            token = RefreshToken.for_user(user)
-            # data = serializer.data
-            data = {
+            token = RefreshToken.for_user(user) 
+            if serializer.data['is_verified'] != False:
+                # data = serializer.data
+                data = {
                 "message": "login successfull",
                 "user_info": serializer.data,
                 "tokens": {"refresh": str(token), "access": str(token.access_token)}
-            } 
-            # data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
-            return Response(data, status=status.HTTP_200_OK)
+                } 
+                # data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
+                return Response(data, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "account not verified!"})
         except Exception as e:
             # print(e)
             return Response({

@@ -117,27 +117,27 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # }
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': "realestate/v2",
-#         'USER': "postgres",
-#         'PASSWORD': "AST@#5212",
-#         'HOST': "localhost",
-#         'PORT': "5432",
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "realestate_v2",
+        'NAME': "realestate/v2",
         'USER': "postgres",
-        'PASSWORD': "1234",
+        'PASSWORD': "AST@#5212",
         'HOST': "localhost",
         'PORT': "5432",
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': "realestate-v2",
+#         'USER': "postgres",
+#         'PASSWORD': "1234",
+#         'HOST': "localhost",
+#         'PORT': "5432",
+#     }
+# }
 
 
 # Password validation
